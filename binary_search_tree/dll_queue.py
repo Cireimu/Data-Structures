@@ -1,3 +1,6 @@
+# from doubly_linked_list import DoublyLinkedList
+# import sys
+# sys.path.append('../doubly_linked_list')
 """Each ListNode holds a reference to its previous node
 as well as its next node in the List."""
 
@@ -71,9 +74,21 @@ class DoublyLinkedList:
     Returns the value of the removed Node."""
 
     def remove_from_head(self):
-        value = self.head.value
-        self.delete(self.head)
-        return value
+        if self.length == 0:
+            return
+        elif self.head == self.tail:
+            value = self.head.value
+            self.head == None
+            self.tail == None
+            self.length -= 1
+            return value
+        else:
+            value = self.head.value
+            new_head = self.head.next
+            new_head.prev = None
+            self.delete(self.head)
+            self.head = new_head
+            return value
 
     """Wraps the given value in a ListNode and inserts it 
     as the new tail of the list. Don't forget to handle 
@@ -82,7 +97,7 @@ class DoublyLinkedList:
     def add_to_tail(self, value):
         new_node = ListNode(value)
         self.length += 1
-        if not self.head and not self.tail:
+        if self.head is None and self.tail is None:
             self.head = new_node
             self.tail = new_node
         else:
@@ -95,9 +110,21 @@ class DoublyLinkedList:
     Returns the value of the removed Node."""
 
     def remove_from_tail(self):
-        value = self.tail.value
-        self.delete(self.tail)
-        return value
+        if self.length == 0:
+            return
+        elif self.head == self.tail:
+            value = self.tail.value
+            self.head == None
+            self.tail == None
+            self.length -= 1
+            return value
+        else:
+            value = self.tail.value
+            new_tail = self.tail.prev
+            new_tail.next = None
+            self.delete(self.tail)
+            self.tail = new_tail
+            return value
 
     """Removes the input node from its current spot in the 
     List and inserts it as the new head node of the List."""
@@ -162,161 +189,15 @@ class DoublyLinkedList:
 
 class Queue:
     def __init__(self):
-        # counter to keep track of the number of elements in our queue
-        self.size = 0
-        # we'll use our LinkedList implementation to build the queue
-        self.storage = DoublyLinkedList()
-
-    def enqueue(self, item):
-        # add the item to the linked list
-        self.storage.add_to_tail(item)
-        # increment our size counter
-        self.size += 1
-
-    def dequeue(self):
-        # decrement our size counter
-        if self.size > 0:
-            self.size -= 1
-            # remove the head of the linked list and return it
-            return self.storage.remove_from_head()
-        else:
-            return None
-
-    def len(self):
-        return self.size
-
-
-class Stack:
-    def __init__(self):
         self.size = 0
         # Why is our DLL a good choice to store our elements?
         self.storage = DoublyLinkedList()
 
-    def push(self, value):
+    def enqueue(self, value):
         self.storage.add_to_tail(value)
-        self.size += 1
 
-    def pop(self):
-        if self.size > 0:
-            self.size -= 1
-            return self.storage.remove_from_tail()
-        else:
-            return None
+    def dequeue(self):
+        return self.storage.remove_from_head()
 
     def len(self):
-        return self.size
-
-
-class BinarySearchTree:
-    def __init__(self, value):
-        self.value = value
-        self.left = None
-        self.right = None
-
-    # Insert the given value into the tree
-       # Insert the given value into the tree
-    def insert(self, value):
-        new = BinarySearchTree(value)
-        if not self.value:
-            return
-        if value < self.value:
-            if not self.left:
-                self.left = new
-            else:
-                # recursion (do same thing with that left node)
-                self.left.insert(value)
-        else:
-            if not self.right:
-                self.right = new
-            else:
-                # recursion (do same thing with that right node)
-                self.right.insert(value)
-
-    # Return True if the tree contains the value
-    # False if it does not
-
-    def contains(self, target):
-        if not self.value:
-            return False
-        if target == self.value:
-            return True
-        else:
-            if target < self.value:
-                if not self.left:
-                    return False
-                else:
-                    return self.left.contains(target)
-            else:
-                if not self.right:
-                    return False
-                else:
-                    return self.right.contains(target)
-
-    # Return the maximum value found in the tree
-    def get_max(self):
-        if not self.value:
-            return None
-        if self.right:
-            return self.right.get_max()
-        else:
-            return self.value
-
-    # Call the function `cb` on the value of each node
-    # You may use a recursive or iterative approach
-    def for_each(self, cb):
-        if not self.value:
-            return
-        cb(self.value)
-        if self.left:
-            self.left.for_each(cb)
-        if self.right:
-            self.right.for_each(cb)
-
-    # DAY 2 Project -----------------------
-
-    # Print all the values in order from low to high
-    # Hint:  Use a recursive, depth first traversal
-    def in_order_print(self, node):
-        if node is None:
-            return
-        else:
-            self.in_order_print(node.left)
-            print(node.value)
-            self.in_order_print(node.right)
-
-    # Print the value of every node, starting with the given node,
-    # in an iterative breadth first traversal
-    def bft_print(self, node):
-        q = Queue()
-        q.enqueue(node)
-        while q.len() > 0:
-            popped_node = q.dequeue()
-            print(popped_node.value)
-            if popped_node.left:
-                q.enqueue(popped_node.left)
-            if popped_node.right:
-                q.enqueue(popped_node.right)
-
-    # Print the value of every node, starting with the given node,
-    # in an iterative depth first traversal
-    def dft_print(self, node):
-        s = Stack()
-        s.push(node)
-        while s.size > 0:
-            popped_node = s.pop()
-            print(popped_node.value)
-            if popped_node.left:
-                s.push(popped_node.left)
-            if popped_node.right:
-                s.push(popped_node.right)
-
-    # STRETCH Goals -------------------------
-    # Note: Research may be required
-
-    # Print Pre-order recursive DFT
-    def pre_order_dft(self, node):
-        pass
-
-    # Print Post-order recursive DFT
-    def post_order_dft(self, node):
-        pass
+        return self.storage.length
